@@ -1,4 +1,8 @@
-﻿body {
+﻿
+
+
+
+/*body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -85,7 +89,17 @@ menu li{
  
 
 
+  menu li{
+      display: inline
+  }
 
+    menu li::after{
+        content: ' |';
+    }
+
+    menu li:last-of-type::after {
+        content: "";
+    }*/
 
 
 
