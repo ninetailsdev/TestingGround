@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DutchConnectionString": "server=DESKTOP-BI4RB94\\SQLEXPRESS;Database=DutchTreat;Integrated Security=True;MultipleActiveResultSets=true;"
+  }
+}
