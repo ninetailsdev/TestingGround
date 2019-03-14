@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DutchTreat.Data;
 using DutchTreat.Models;
 using DutchTreat.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +11,20 @@ namespace DutchTreat.Controllers
 {
     public class AppController : Controller
     {
-        public readonly IMailService _mailService;
+       // public readonly IMailService _mailService;
+        private readonly IDutchRepository _repository;
+       
 
-        public AppController(IMailService mailService)
+        public AppController( IDutchRepository repository)
         {
-            _mailService = mailService;
+          //  _mailService = mailService;
+            _repository = repository;
+            
         }
 
         public IActionResult Index()
         {
+           
             return View();
         }
 
@@ -35,11 +41,11 @@ namespace DutchTreat.Controllers
             if (ModelState.IsValid)
             {
                 // send message
-                _mailService.SendMessage("EmailAddress", model.Subject, $"From:{model.Name} - {model.Email}, Message: {model.Message}");
+                //_mailService.SendMessage("EmailAddress", model.Subject, $"From:{model.Name} - {model.Email}, Message: {model.Message}");
 
-                ViewBag.UserMessage = "mail sent";
+                //ViewBag.UserMessage = "mail sent";
 
-                ModelState.Clear();
+                //ModelState.Clear();
             }
           
 
@@ -50,6 +56,13 @@ namespace DutchTreat.Controllers
         {
             ViewBag.Title = "About Us";
             return View();
+        }
+
+        public IActionResult Shop()
+        {
+            var results = _repository.GetAllProducts();
+
+            return View(results);
         }
     }
 }
