@@ -66,17 +66,26 @@ namespace DutchTreat.Data
           
         }
 
-        public IEnumerable<Order> GetAllOrders()
+        public IEnumerable<Order> GetAllOrders(bool includeItems)
         {
             try
             {
                 _logger.LogInformation($"getting all orders");
-                return _ctx.Orders
-                        .Include(o => o.Items)
-                        .ThenInclude(i => i.Product)
-                        .ToList();
+                if (includeItems)
+                {
+                    return _ctx.Orders
+                               .Include(o => o.Items)
+                               .ThenInclude(i => i.Product)
+                               .ToList();
+                }
+                else
+                {
+                    return _ctx.Orders
+                               .ToList();
+                }
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError($"failed to get all orers: {ex}");
                 return null;
@@ -91,6 +100,11 @@ namespace DutchTreat.Data
                       .Where(x => x.Id == id)
                       .FirstOrDefault();
                    
+        }
+
+        public void AddEntity(object model)
+        {
+            _ctx.Add(model);
         }
     }
 }
