@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using DutchTreat.Data;
+using DutchTreat.Data.Entities;
 using DutchTreat.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +32,12 @@ namespace DutchTreat
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<StoreUser, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+                
+            }).AddEntityFrameworkStores<DutchContext>(); 
+
             services.AddDbContext<DutchContext>( cfg =>
             {
                 cfg.UseSqlServer(_config.GetConnectionString("DutchConnectionString"));
@@ -41,9 +49,11 @@ namespace DutchTreat
 
             services.AddScoped<IDutchRepository, DutchRepository>();
 
+            services.AddTransient<IMailService, NullMailService>();
+
             services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                    .AddJsonOptions(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); // deal with self referencing loops in models
+           .AddJsonOptions(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
+           .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); // deal with self referencing loops in models
 
             services.AddSwaggerGen(c =>
             {
@@ -64,6 +74,8 @@ namespace DutchTreat
             }
 
             app.UseStaticFiles();
+      
+
             app.UseNodeModules(env);
             app.UseSwagger();
 
@@ -72,14 +84,16 @@ namespace DutchTreat
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
-            app.UseMvc(config =>
+
+            app.UseAuthentication();
+            app.UseMvc(cfg =>
             {
-                config.MapRoute("Default",
-                    "/{controller}/{action}/{id?}", 
-                    new { controller = "App", Action = "Index" });
+                cfg.MapRoute("Default",
+                  "{controller}/{action}/{id?}",
+                  new { controller = "App", Action = "Index" });
             });
 
-     
+
         }
     }
 }
