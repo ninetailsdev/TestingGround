@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
